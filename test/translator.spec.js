@@ -16,13 +16,6 @@ test.describe('Swift Translator – Singlish to Sinhala (34 Test Cases)', () => 
     return { input, output };
   }
 
-  /* =====================
-     TEST DATA (FROM EXCEL)
-     expected:
-       - "output"  → translation should appear
-       - "stable"  → app should not crash (output may be empty)
-     ===================== */
-
   const testCases = [
     { id: 'Pos_Fun_0001', name: 'Convert a short daily statement', input: 'mama gedhara inne', expected: 'output' },
     { id: 'Pos_Fun_0002', name: 'Convert a short food request', input: 'mata kaema kanna oonee', expected: 'output' },
@@ -62,15 +55,13 @@ test.describe('Swift Translator – Singlish to Sinhala (34 Test Cases)', () => 
     { id: 'Neg_Fun_0034', name: 'Empty-like spacing', input: '   mama inne   ', expected: 'stable' },
   ];
 
-  /* =====================
-     GENERATED TESTS (34)
-     ===================== */
-
   for (const tc of testCases) {
     test(`${tc.id} - ${tc.name}`, async ({ page }) => {
       const { input, output } = await getElements(page);
 
-      // type instead of fill → triggers real input events
+      await input.click();
+      await input.press('Control+A');
+      await input.press('Backspace');
       await input.type(tc.input, { delay: 30 });
 
       if (tc.expected === 'output') {
@@ -79,7 +70,6 @@ test.describe('Swift Translator – Singlish to Sinhala (34 Test Cases)', () => 
           { timeout: 20000 }
         ).not.toBe('');
       } else {
-        // robustness: app should remain stable
         await expect(output).toBeVisible();
       }
     });
